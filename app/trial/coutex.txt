@@ -1,0 +1,54 @@
+import { View, Text, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import * as Haptics from "expo-haptics";
+
+const TabIcon = ({ title, onPress, color } : any) => {
+  const handlePress = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onPress();
+  };
+
+  return (
+    <TouchableOpacity
+      onPress={handlePress}
+      activeOpacity={0.8}
+      className={`px-5 py-3 rounded-full ${color}`}
+    >
+      <Text className="text-white font-semibold text-lg">{title}</Text>
+    </TouchableOpacity>
+  );
+};
+
+const Index = () => {
+  const [count, setCount] = useState(0);
+
+  return (
+    <View className="flex-1 justify-center items-center bg-secondary">
+      <Text className="text-5xl mb-5 text-primary">Counter App</Text>
+
+      <Text className="text-6xl text-dark-100 mb-8">{count}</Text>
+
+      <View className="flex-row gap-5">
+        <TabIcon
+          title="Increment"
+          onPress={() => setCount(count + 1)}
+          color="bg-green-500"
+        />
+
+        <TabIcon
+          title="Decrement"
+          onPress={() => setCount(count - 1)}
+          color="bg-red-500"
+        />
+
+        <TabIcon
+          title="Reset"
+          onPress={() => setCount(0)}
+          color="bg-blue-500"
+        />
+      </View>
+    </View>
+  );
+};
+
+export default Index;
