@@ -2,6 +2,7 @@ import * as Haptics from 'expo-haptics';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Dimensions, Image, ScrollView, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Text from '../components/Text';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -12,7 +13,7 @@ const products = {
     id: 1,
     name: 'Fresh Apple',
     rating: '5.0',
-    image: require('../../assets/images/img-1.avif'),
+    image: require('../../assets/images/img-1.jpg'),
     price: '$4.79',
     quantity: '1Kg',
     ingredients: ['Celery', 'Avocado', 'Spinach'],
@@ -22,7 +23,7 @@ const products = {
     id: 2,
     name: 'Fresh Tomato',
     rating: '4.8',
-    image: require('../../assets/images/img-2.avif'),
+    image: require('../../assets/images/img-2.jpg'),
     price: '$6.29',
     quantity: '1Kg',
     ingredients: ['Celery', 'Avocado', 'Spinach'],
@@ -32,7 +33,7 @@ const products = {
     id: 3,
     name: 'Fresh Grape',
     rating: '4.9',
-    image: require('../../assets/images/img-3.avif'),
+    image: require('../../assets/images/img-3.jpg'),
     price: '$5.19',
     quantity: '1Kg',
     ingredients: ['Celery', 'Avocado', 'Spinach'],
@@ -42,7 +43,7 @@ const products = {
     id: 4,
     name: 'Fresh Orange',
     rating: '5.0',
-    image: require('../../assets/images/img-4.avif'),
+    image: require('../../assets/images/img-4.jpg'),
     price: '$6.49',
     quantity: '1Kg',
     ingredients: ['Celery', 'Avocado', 'Spinach'],
@@ -52,7 +53,7 @@ const products = {
     id: 5,
     name: 'Dragon Fruit',
     rating: '4.7',
-    image: require('../../assets/images/img-5.avif'),
+    image: require('../../assets/images/img-5.jpg'),
     price: '$7.25',
     quantity: '1Kg',
     ingredients: ['Celery', 'Avocado', 'Spinach'],
@@ -62,7 +63,7 @@ const products = {
     id: 6,
     name: 'Pineapple',
     rating: '4.7',
-    image: require('../../assets/images/img-6.avif'),
+    image: require('../../assets/images/img-6.jpg'),
     price: '$5.49',
     quantity: '1Kg',
     ingredients: ['Celery', 'Avocado', 'Spinach'],
@@ -73,6 +74,7 @@ const products = {
 export default function ProductDetails() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [quantity, setQuantity] = useState(1);
   const [isFavorite, setIsFavorite] = useState(false);
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -132,9 +134,9 @@ export default function ProductDetails() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ paddingTop: insets.top }}>
         {/* Header Section */}
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 60, paddingBottom: 20 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 20, paddingBottom: 20 }}>
           <TouchableOpacity
             onPress={() => router.back()}
             style={{
@@ -199,7 +201,7 @@ export default function ProductDetails() {
 
         {/* Product Info Section */}
         <View style={{ paddingHorizontal: 20, marginBottom: 12 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
             <Image
               source={require('../../assets/images/star.png')}
               style={{ width: 20, height: 20, marginRight: 8 }}
@@ -209,7 +211,7 @@ export default function ProductDetails() {
               {product.rating}
             </Text>
           </View>
-          <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#000000', marginBottom: 8 }}>
+          <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#000000', marginBottom: 4 }}>
             {product.name}
           </Text>
           <Text style={{ fontSize: 22, fontWeight: '600', color: '#FBBF24' }}>
@@ -218,8 +220,8 @@ export default function ProductDetails() {
         </View>
 
         {/* Ingredients Section */}
-        <View style={{ paddingHorizontal: 20, marginBottom: 24 }}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#000000', marginBottom: 16 }}>
+        <View style={{ paddingHorizontal: 20, marginBottom: 16 }}>
+          <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#000000', marginBottom: 12 }}>
             Ingredients
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -232,11 +234,6 @@ export default function ProductDetails() {
                   paddingVertical: 12,
                   borderRadius: 25,
                   marginRight: 12,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.05,
-                  shadowRadius: 4,
-                  elevation: 2,
                   borderWidth: 1,
                   borderColor: '#E5E7EB',
                 }}
@@ -250,7 +247,7 @@ export default function ProductDetails() {
         </View>
 
         {/* Description Section */}
-        <View style={{ paddingHorizontal: 20, marginBottom: 100 }}>
+        <View style={{ paddingHorizontal: 20, marginBottom: 100 + insets.bottom }}>
           <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#000000', marginBottom: 12 }}>
             Description
           </Text>
@@ -270,8 +267,8 @@ export default function ProductDetails() {
           borderTopLeftRadius: 30,
           borderTopRightRadius: 30,
           paddingHorizontal: 20,
-          paddingVertical: 20,
-          paddingBottom: 30,
+          paddingTop: 20,
+          paddingBottom: Math.max(insets.bottom, 30),
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>

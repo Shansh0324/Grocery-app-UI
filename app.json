@@ -1,17 +1,19 @@
 {
   "expo": {
     "name": "Grocy",
-    "slug": "movieApp",
+    "slug": "grocy",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/Grocy.png",
-    "scheme": "movieapp",
+    "scheme": "grocy",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.grocy.app"
     },
     "android": {
+      "package": "com.grocy.app",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/Grocy.png",
@@ -43,6 +45,15 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "c14e3e02-5da4-46fd-bd27-13d50027bf86"
+      }
     }
   }
 }

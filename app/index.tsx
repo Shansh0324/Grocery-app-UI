@@ -3,12 +3,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import { Dimensions, Image, Modal, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Text from './components/Text';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function Index() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   // ✅ moved these outside HomeScreen
   const fruits = [
@@ -22,12 +24,12 @@ export default function Index() {
   ];
 
   const offers = [
-    { id: 1, name: "Fresh Apple", quantity: "1Kg", price: "$4.79", image: require('../assets/images/img-1.avif'), rating: "5.0" },
-    { id: 2, name: "Fresh Tomato", quantity: "1Kg", price: "$6.29", image: require('../assets/images/img-2.avif'), rating: "4.8" },
-    { id: 3, name: "Fresh Grape", quantity: "1Kg", price: "$5.19", image: require('../assets/images/img-3.avif'), rating: "4.9" },
-    { id: 4, name: "Fresh Orange", quantity: "1Kg", price: "$6.49", image: require('../assets/images/img-4.avif'), rating: "5.0" },
-    { id: 5, name: "Dragon Fruit", quantity: "1Kg", price: "$7.25", image: require('../assets/images/img-5.avif'), rating: "4.7" },
-    { id: 6, name: "Pineapple", quantity: "1Kg", price: "$5.49", image: require('../assets/images/img-6.avif'), rating: "4.7" },
+    { id: 1, name: "Fresh Apple", quantity: "1Kg", price: "$4.79", image: require('../assets/images/img-1.jpg'), rating: "5.0" },
+    { id: 2, name: "Fresh Tomato", quantity: "1Kg", price: "$6.29", image: require('../assets/images/img-2.jpg'), rating: "4.8" },
+    { id: 3, name: "Fresh Grape", quantity: "1Kg", price: "$5.19", image: require('../assets/images/img-3.jpg'), rating: "4.9" },
+    { id: 4, name: "Fresh Orange", quantity: "1Kg", price: "$6.49", image: require('../assets/images/img-4.jpg'), rating: "5.0" },
+    { id: 5, name: "Dragon Fruit", quantity: "1Kg", price: "$7.25", image: require('../assets/images/img-5.jpg'), rating: "4.7" },
+    { id: 6, name: "Pineapple", quantity: "1Kg", price: "$5.49", image: require('../assets/images/img-6.jpg'), rating: "4.7" },
   ];
 
   const bannerOffers = [
@@ -41,34 +43,48 @@ export default function Index() {
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Combine fruits and offers for search
+  // Combine fruits and offers for search, avoiding duplicates
   const allItems = [
     ...offers,
-    ...fruits.map((fruit, index) => ({
-      id: offers.length + index + 1,
-      name: `Fresh ${['Apple', 'Peach', 'Grape', 'Watermelon', 'Strawberry', 'Corn', 'Mushroom'][index]}`,
-      quantity: "1Kg",
-      price: "$5.99",
-      image: fruit.image,
-      rating: "4.5"
-    }))
+    ...fruits
+      .map((fruit, index) => ({
+        id: offers.length + index + 1,
+        name: `Fresh ${['Apple', 'Peach', 'Grape', 'Watermelon', 'Strawberry', 'Corn', 'Mushroom'][index]}`,
+        quantity: "1Kg",
+        price: "$5.99",
+        image: fruit.image,
+        rating: "4.5"
+      }))
+      .filter(fruitItem => {
+        // Filter out fruits that already exist in offers by name
+        return !offers.some(offer => 
+          offer.name.toLowerCase() === fruitItem.name.toLowerCase()
+        );
+      })
   ];
 
   // Filter items based on search query
   const filteredItems = searchQuery.trim() === '' 
     ? [] 
-    : allItems.filter(item => 
-        item.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+    : allItems
+        .filter(item => 
+          item.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        .filter((item, index, self) => 
+          // Remove duplicates based on name (case-insensitive)
+          index === self.findIndex((t) => 
+            t.name.toLowerCase() === item.name.toLowerCase()
+          )
+        );
 
   return (
-    <ScrollView className='flex-1 bg-white px-5 font-sans' style={{ paddingTop: 40 }} showsVerticalScrollIndicator={false}>
+    <ScrollView className='flex-1 bg-white px-5 font-sans' style={{ paddingTop: Math.max(insets.top, 40), paddingBottom: insets.bottom }} showsVerticalScrollIndicator={false}>
 
       {/* Header Section */}
       <View className='mt-10 flex-row justify-between items-end'>
         <View>
-          <Text className='text-3xl font-bold'>Daily</Text>
-          <Text className='text-3xl font-bold'>Grocery Food</Text>
+          <Text className='text-3xl font-semibold' style={{ lineHeight: 32 }}>Daily</Text>
+          <Text className='text-3xl font-semibold' style={{ lineHeight: 32 }}>Grocery Food</Text>
         </View>
         <TouchableOpacity 
           className='bg-gray-100 p-3 rounded-full' 
@@ -118,8 +134,9 @@ export default function Index() {
                   <Text
                     style={{
                       color: '#FFFFFF',
-                      fontSize: 26,
-                      fontWeight: 'bold',
+                      fontSize: 24,
+                      fontWeight: '600',
+                      lineHeight: 28,
                       marginBottom: 4,
                     }}
                   >
@@ -128,8 +145,9 @@ export default function Index() {
                   <Text
                     style={{
                       color: '#FFFFFF',
-                      fontSize: 26,
-                      fontWeight: 'bold',
+                      fontSize: 24,
+                      fontWeight: '600',
+                      lineHeight: 28,
                       marginBottom: 4,
                     }}
                   >
@@ -138,8 +156,9 @@ export default function Index() {
                   <Text
                     style={{
                       color: '#FFFFFF',
-                      fontSize: 26,
-                      fontWeight: 'bold',
+                      fontSize: 24,
+                      fontWeight: '600',
+                      lineHeight: 28,
                       marginBottom: 16,
                     }}
                   >
@@ -159,7 +178,7 @@ export default function Index() {
                       marginTop: 8,
                     }}
                   >
-                    <Text style={{ color: '#000000', fontWeight: 'bold', fontSize: 16 }}>Shop Now</Text>
+                    <Text style={{ color: '#000000', fontWeight: '600', fontSize: 15 }}>Shop Now</Text>
                   </TouchableOpacity>
                 </View>
 
@@ -207,7 +226,7 @@ export default function Index() {
 
       {/* Fruits Section */}
       <View className='mt-8'>
-        <Text className='text-2xl font-bold mb-3'>More Fruits</Text>
+        <Text className='text-2xl font-semibold mb-3'>More Fruits</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {fruits.map((item, index) => {
             const fruitWidth = 56;
@@ -251,7 +270,7 @@ export default function Index() {
 
       {/* Special Offers */}
       <View style={{ marginTop: 32, marginBottom: 40 }}>
-        <Text className='text-2xl font-bold mb-3'>Special Offers</Text>
+        <Text className='text-2xl font-semibold mb-3'>Special Offers</Text>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
           {offers.map((item) => (
             <TouchableOpacity
@@ -356,6 +375,7 @@ export default function Index() {
             borderRadius: 25,
             alignSelf: 'center',
             marginTop: 16,
+            marginBottom: 20,
           }}
         >
           <Text style={{ color: '#000000', fontWeight: '600', fontSize: 16 }}>
@@ -374,31 +394,50 @@ export default function Index() {
           setSearchQuery('');
         }}
       >
-        <View style={{ flex: 1, backgroundColor: '#FFFFFF', paddingTop: 60 }}>
+        <View style={{ flex: 1, backgroundColor: '#FFFFFF', paddingTop: Math.max(insets.top, 50), paddingBottom: insets.bottom }}>
           {/* Search Header */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, marginBottom: 20 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingTop: 16, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' }}>
             <TouchableOpacity
               onPress={() => {
                 setIsSearchVisible(false);
                 setSearchQuery('');
               }}
-              style={{ marginRight: 12 }}
+              style={{ 
+                width: 40,
+                height: 40,
+                borderRadius: 20,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginRight: 12,
+                backgroundColor: '#F9FAFB',
+              }}
             >
-              <Text style={{ fontSize: 18, color: '#000000' }}>←</Text>
+              <Text style={{ fontSize: 20, color: '#000000', fontWeight: '600' }}>←</Text>
             </TouchableOpacity>
-            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#F3F4F6', borderRadius: 25, paddingHorizontal: 16, paddingVertical: 12 }}>
+            <View style={{ 
+              flex: 1, 
+              flexDirection: 'row', 
+              alignItems: 'center', 
+              backgroundColor: '#F9FAFB', 
+              borderRadius: 25, 
+              paddingHorizontal: 16, 
+              paddingVertical: 12,
+              borderWidth: 1,
+              borderColor: '#E5E7EB',
+            }}>
               <Image 
                 source={require('../assets/images/search.png')}
-                style={{ width: 20, height: 20, marginRight: 10 }}
+                style={{ width: 20, height: 20, marginRight: 12, tintColor: '#6B7280' }}
                 resizeMode='contain'
               />
               <TextInput
-                style={{ flex: 1, fontSize: 16, color: '#000000' }}
+                style={{ flex: 1, fontSize: 16, color: '#000000', padding: 0 }}
                 placeholder="Search for items..."
                 placeholderTextColor="#9CA3AF"
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 autoFocus={true}
+                returnKeyType="search"
               />
             </View>
           </View>
